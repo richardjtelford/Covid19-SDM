@@ -70,5 +70,13 @@ cases_temp %>%
   geom_point() +
   scale_colour_viridis_c() 
 
+#presence absence analysis
 
-
+cases_temp %>% 
+  mutate(present = if_else(cases < 5, 0, 1), 
+         date = format(date, "%b %d")) %>% 
+  ggplot(aes(x = feb, y = present)) +
+  geom_point() +
+  geom_smooth(method = "glm", formula = y ~ splines::ns(x), method.args = list( family = "binomial")) +
+  facet_wrap(~date)
+  
