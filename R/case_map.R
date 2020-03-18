@@ -5,6 +5,12 @@ source("R/download_data.R")
 
 cases <- DownloadData()
   
+#correct location of French Polynesia (should be corrected in source soon - issue #641)
+cases <- cases %>% 
+  mutate(Long = case_when(
+    `Province/State` == "French Polynesia" & Long > 0 ~ -Long, 
+    TRUE ~ Long))
+
 cases_to_map <- cases %>% 
   filter(date == "2020-03-10" | date == max(date)) %>% 
   mutate(when = if_else(date == "2020-03-10", "march10", "latest")) %>%
