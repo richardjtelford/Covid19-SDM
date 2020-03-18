@@ -77,6 +77,8 @@ cases_temp %>%
          date = format(date, "%b %d")) %>% 
   ggplot(aes(x = feb, y = present)) +
   geom_point() +
-  geom_smooth(method = "glm", formula = y ~ splines::ns(x), method.args = list( family = "binomial")) +
+#  geom_smooth(method = "glm", formula = y ~ splines::ns(x), method.args = list( family = "binomial")) +
+   #geom_smooth(method = "glm", formula = y ~ poly(x, 2), method.args = list( family = "binomial")) +  
+  geom_smooth(method = "gam", method.args = list( family = "binomial")) +
   facet_wrap(~date)
   
