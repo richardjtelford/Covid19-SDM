@@ -43,8 +43,8 @@ case_map_animate <- ggplot(cases, aes(x = Long, y = Lat, colour = cases > 5)) +
   coord_quickmap() +
   labs(colour = "Reached five cases") +
   transition_states(date,
-                    transition_length = 2,
-                    state_length = 1) +
+                    transition_length = 0,
+                    state_length = 3) +
   ggtitle('Now showing {closest_state}') + 
   theme(legend.position = "bottom",
         axis.title = element_blank())
