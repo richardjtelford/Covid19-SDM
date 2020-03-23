@@ -37,7 +37,7 @@ case_map
 
 
 #animation
-case_map_animate <- ggplot(cases, aes(x = Long, y = Lat, colour = cases > 5)) +
+case_map_animate <- cases %>% arrange(cases) %>% ggplot(aes(x = Long, y = Lat, colour = cases > 5)) +
   geom_map(map = mp, data = mp, aes(map_id = region), inherit.aes = FALSE, fill = "grey80", colour = "grey40") +
   geom_point() +
   coord_quickmap() +
@@ -46,6 +46,7 @@ case_map_animate <- ggplot(cases, aes(x = Long, y = Lat, colour = cases > 5)) +
                     transition_length = 0,
                     state_length = 3) +
   ggtitle('Now showing {closest_state}') + 
+  theme_bw() +
   theme(legend.position = "bottom",
         axis.title = element_blank())
 
