@@ -1,4 +1,5 @@
 library("tidyverse")
+library("gganimate")
 
 #download data
 source("R/download_data.R")
@@ -33,3 +34,20 @@ case_map <- ggplot(cases_to_map, aes(x = Long, y = Lat, colour = five)) +
         axis.title = element_blank())
 
 case_map
+
+
+#animation
+case_map_animate <- ggplot(cases, aes(x = Long, y = Lat, colour = cases > 5)) +
+  geom_map(map = mp, data = mp, aes(map_id = region), inherit.aes = FALSE, fill = "grey80", colour = "grey40") +
+  geom_point() +
+  coord_quickmap() +
+  labs(colour = "Reached five cases") +
+  transition_states(date,
+                    transition_length = 2,
+                    state_length = 1) +
+  ggtitle('Now showing {closest_state}') + 
+  theme(legend.position = "bottom",
+        axis.title = element_blank())
+
+case_map_animate
+
