@@ -4,7 +4,7 @@ library(ggplot2)
 library(mgcv)
 
 # Import the data
-inputDataFolder <- Sys.getenv("WORKSPACE_COVIDSDMRESPONSE")
+inputDataFolder <- paste(Sys.getenv("WORKSPACE_COVIDSDMRESPONSE"), "AnalysisOutputs", sep = "/")
 vectorData <- readRDS(paste(inputDataFolder, "vectorData.rds", sep = "/"))
 # monthText <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
 #vectorData$climateLayers <- c(

@@ -1,7 +1,11 @@
 library(raster)
 library(sf)
 
-outputDataFolder <- Sys.getenv("WORKSPACE_COVIDSDMRESPONSE")
+# Set the output folder
+outputDataFolder <- paste(Sys.getenv("WORKSPACE_COVIDSDMRESPONSE"), "AnalysisOutputs", sep = "/")
+if(!dir.exists(outputDataFolder)) {
+  dir.create(outputDataFolder)
+}
 
 # Download the Natural Earth dataset for country administrative boundaries
 tempNatEarthLoc <- tempdir()

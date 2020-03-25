@@ -3,7 +3,7 @@ library(sf)
 library(ggplot2)
 
 # Import the data
-inputDataFolder <- Sys.getenv("WORKSPACE_COVIDSDMRESPONSE")
+inputDataFolder <- paste(Sys.getenv("WORKSPACE_COVIDSDMRESPONSE"), "AnalysisOutputs", sep = "/")
 covidData <- readRDS(paste(inputDataFolder, "vectorData.rds", sep = "/"))
 
 # Create a set of dates to demonstrate the distribution of the COVID-19 coronavirus at
@@ -44,3 +44,6 @@ casePlot <- function(dateSliceData, adminBorders, plotSave = NULL) {
 caseFigures <- setNames(lapply(X = names(dateStackCases), FUN = function(curSliceName, dateStackCases, adminBorders, outLoc) {
   casePlot(dateStackCases[[curSliceName]], adminBorders, paste(outLoc, "/", curSliceName, ".svg", sep = ""))
 }, dateStackCases = dateStackCases, adminBorders = covidData$adminData, outLoc = inputDataFolder), names(dateStackCases))
+
+# Save the plots
+saveRDS(caseFigures, file = paste(inputDataFolder, "caseFigures.rds", sep = "/"))
