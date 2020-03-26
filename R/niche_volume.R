@@ -4,6 +4,9 @@ library(tidyverse)
 library(ggthemes)
 library(HH)
 
+#chelsa dir
+chelsa.dir <- "/home/blas/Desktop/chelsa" #CHELSA folder with bio1 bio4 bio5 bio6 bio12 bio15 at 1km resolution
+
 #function to measure niche volume
 niche_volume <- function(x, dims, bandwidth){
   
@@ -24,7 +27,7 @@ niche_volume <- function(x, dims, bandwidth){
   
   return(hv.volume)
   
-}
+}#eof
 
 
 #getting covidData
@@ -41,7 +44,7 @@ covid <- covid %>%
 #importing environmental data
 environment <- raster::stack(
   list.files(
-    "/home/blas/Desktop/chelsa", #CHELSA folder with bio1 bio4 bio5 bio6 bio12 bio15 at 1km resolution
+    chelsa.dir,
     full.names = TRUE
     )
   )
