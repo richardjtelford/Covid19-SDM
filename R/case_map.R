@@ -12,6 +12,14 @@ cases <- cases %>%
     `Province/State` == "French Polynesia" & Long > 0 ~ -Long, 
     TRUE ~ Long))
 
+#west bank fix
+cases %>% filter(cases < 0)
+cases %>% filter(`Country/Region` == "West Bank and Gaza") %>% tail()
+
+cases <- cases %>% 
+  mutate(cases = if_else(cases < 0, true = lag(cases), false = cases)) 
+
+#map
 cases_to_map <- cases %>% 
   filter(date == "2020-03-10" | date == max(date)) %>% 
   mutate(when = if_else(date == "2020-03-10", "march10", "latest")) %>%
@@ -43,6 +51,7 @@ date_levels <- format(
   date_format)
 
 case_map_animate <- cases %>% 
+  filter(cases > 0) %>% 
   arrange(cases) %>% 
   mutate(date2 = format(date, date_format),
          date2 = factor(date2, levels = date_levels)) %>% 
@@ -50,18 +59,20 @@ case_map_animate <- cases %>%
   geom_map(map = mp, data = mp, aes(map_id = region), inherit.aes = FALSE, fill = "grey85", colour = "grey40") +
   geom_point() +
   coord_quickmap() +
-  scale_color_brewer(palette = "Set1", direction = -1, labels = c("Fewer than five cases", "Five or more cases")) +
+  scale_color_brewer(palette = "Set1", direction = -1, labels = c("One to four cases", "Five or more cases")) +
   labs(colour = "") +
   transition_states(date2,
                     transition_length = 0,
-                    state_length = 3) +
+                    state_length = 1) +
   ggtitle('{closest_state}') + 
-  theme_bw() +
+  theme_bw(base_size = 16) +
   theme(legend.position = "bottom",
         axis.title = element_blank(), 
         axis.text = element_blank(), 
         panel.grid = element_blank()
         )
 
-animate(case_map_animate, height = 260, width = 480, end_pause = 10)
+nsteps <- n_distinct(cases$date) 
+pause <- 5
+animate(case_map_animate, fps = 5, nframes = nsteps + pause,  height = 260, width = 480, end_pause = pause)
 anim_save(filename = "animated_cases.gif")
