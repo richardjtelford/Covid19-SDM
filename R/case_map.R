@@ -37,18 +37,31 @@ case_map
 
 
 #animation
-case_map_animate <- cases %>% arrange(cases) %>% ggplot(aes(x = Long, y = Lat, colour = cases > 5)) +
-  geom_map(map = mp, data = mp, aes(map_id = region), inherit.aes = FALSE, fill = "grey80", colour = "grey40") +
+date_format <- "%d %B"
+date_levels <- format(
+  x = seq(min(cases$date), max(cases$date), by = "1 day"), 
+  date_format)
+
+case_map_animate <- cases %>% 
+  arrange(cases) %>% 
+  mutate(date2 = format(date, date_format),
+         date2 = factor(date2, levels = date_levels)) %>% 
+  ggplot(aes(x = Long, y = Lat, colour = cases > 5)) +
+  geom_map(map = mp, data = mp, aes(map_id = region), inherit.aes = FALSE, fill = "grey85", colour = "grey40") +
   geom_point() +
   coord_quickmap() +
-  labs(colour = "Reached five cases") +
-  transition_states(date,
+  scale_color_brewer(palette = "Set1", direction = -1, labels = c("Fewer than five cases", "Five or more cases")) +
+  labs(colour = "") +
+  transition_states(date2,
                     transition_length = 0,
                     state_length = 3) +
-  ggtitle('Now showing {closest_state}') + 
+  ggtitle('{closest_state}') + 
   theme_bw() +
   theme(legend.position = "bottom",
-        axis.title = element_blank())
+        axis.title = element_blank(), 
+        axis.text = element_blank(), 
+        panel.grid = element_blank()
+        )
 
-case_map_animate
-
+animate(case_map_animate, height = 260, width = 480, end_pause = 10)
+anim_save(filename = "animated_cases.gif")
