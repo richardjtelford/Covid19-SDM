@@ -82,3 +82,44 @@ cases_temp %>%
   geom_smooth(method = "gam", method.args = list( family = "binomial")) +
   facet_wrap(~date)
   
+
+
+#growth vs temperature
+cases %>% 
+  left_join(loc_temp) %>%
+  filter(max(cases) > 450) %>% 
+  ggplot(aes(date, cases, colour = feb, group = paste(`Province/State`, `Country/Region`))) + 
+  geom_line() +
+  scale_colour_viridis_c() +
+  coord_cartesian(ylim = c(0, 500))
+
+cases_100_400 <- cases %>% 
+  left_join(loc_temp) %>%
+  group_by(feb, Lat, Long, add = TRUE) %>% 
+  filter(min(cases) < 100, max(cases) > 400) %>% 
+  nest() %>% 
+  mutate(time = map_dbl(data, ~diff(approx(x = .x$cases, y = .x$date, xout = c(100, 400))$y))) 
+  
+cases_100_400 %>% ggplot(aes(x = feb, y = time)) +
+  geom_point()
+
+#######  Ficetola &  Rubolini
+  
+r50 <- cases %>% 
+  left_join(loc_temp) %>% 
+  filter(cases >= 50) %>%
+  #get first date above 50 and 5 days later
+  filter(date == min(date) | date == min(date + 5)) %>% 
+  #check at least 2 dates (ie day 5 is present)
+  filter(n() == 2) %>% 
+  group_by(feb, .add = TRUE) %>% 
+  summarise(r50 = (log(max(cases)) - log(min(cases))) / 5)
+  
+
+ggplot(r50, aes(x = feb, y = r50)) + 
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2))
+
+
+r50 %>% filter(r50 > 0.4) %>% 
+  arrange(-r50)
